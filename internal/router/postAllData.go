@@ -24,13 +24,15 @@ func (s *serverKeeper) postWrite(c echo.Context) error {
 	}
 	bodyOrder := string(body)
 
-	getType := c.Request().Header.Get(service.Type)
-	switch getType {
-	case service.Card:
+	path := c.Request().URL.Path
+	switch path {
+	case service.Write + service.Card:
 		err = s.DB.WriteCard(c.Request().Context(), bodyOrder, userID)
-	case service.Password:
+	case service.Write + service.Password:
 		err = s.DB.WritePassword(c.Request().Context(), bodyOrder, userID)
-	case service.Text:
+	case service.Write + service.Text:
+		err = s.DB.WriteText(c.Request().Context(), bodyOrder, userID)
+	case service.Write + service.Bin:
 		err = s.DB.WriteText(c.Request().Context(), bodyOrder, userID)
 	default:
 		c.Response().WriteHeader(http.StatusInternalServerError)

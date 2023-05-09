@@ -7,15 +7,18 @@ import (
 	"github.com/pkg/errors"
 )
 
+// пока здесь все константы, ещё не знаю куда их девать
 const keyJWT = "pqla3zxjonfgwouhf"
 const (
 	Authorization = "Authorization"
 	Bearer        = "Bearer"
 	User          = "user"
-	Type          = "dataType"
-	Card          = "card"
-	Text          = "text"
-	Password      = "password"
+	Write         = "/write"
+	Read          = "/read"
+	Card          = "/card"
+	Text          = "/text"
+	Password      = "/password"
+	Bin           = "/bin"
 )
 
 type ClaimsUser struct {

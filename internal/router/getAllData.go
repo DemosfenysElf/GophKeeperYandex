@@ -17,13 +17,15 @@ func (s *serverKeeper) getReadALL(c echo.Context) error {
 	}
 
 	var data interface{}
-	getType := c.Request().Header.Get(service.Type)
-	switch getType {
-	case service.Card:
+	path := c.Request().URL.Path
+	switch path {
+	case service.Read + service.Card:
 		data, err = s.DB.ReadAllCard(c.Request().Context(), userID)
-	case service.Password:
+	case service.Read + service.Password:
 		data, err = s.DB.ReadAllPassword(c.Request().Context(), userID)
-	case service.Text:
+	case service.Read + service.Text:
+		data, err = s.DB.ReadAllText(c.Request().Context(), userID)
+	case service.Read + service.Bin:
 		data, err = s.DB.ReadAllText(c.Request().Context(), userID)
 	default:
 		c.Response().WriteHeader(http.StatusInternalServerError)

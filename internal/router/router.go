@@ -42,8 +42,15 @@ func (s serverKeeper) Router() error {
 	e.POST("/api/user/register", s.postAPIUserRegister)
 	e.POST("/api/user/login", s.postAPIUserLogin)
 
-	e.POST("/DB/", s.postWrite)
-	e.GET("/DB/", s.getReadALL)
+	e.POST("/write/card", s.postWrite)
+	e.POST("/write/password", s.postWrite)
+	e.POST("/write/text", s.postWrite)
+	e.POST("/write/bin", s.postWrite)
+
+	e.GET("/read/card", s.getReadALL)
+	e.GET("/read/password", s.getReadALL)
+	e.GET("/read/text", s.getReadALL)
+	e.GET("/read/bin", s.getReadALL)
 
 	err := e.Start(s.Cfg.ServerAddress)
 	if err != nil {
