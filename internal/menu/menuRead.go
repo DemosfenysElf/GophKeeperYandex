@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 
@@ -140,6 +141,57 @@ func (ad allData) readText() error {
 	}
 	fmt.Println("Название заметки   ", sTs[number-1].TextName)
 	fmt.Println("Текст заметки      ", sTs[number-1].Text)
+
+	return nil
+}
+
+func (ad allData) readFile() error {
+	var sF saveFile
+	var sFs []saveFile
+	var number int
+
+	passwords, err := ad.getRead("/read/bin")
+	if err != nil {
+		return err
+	}
+
+	for _, bytes := range passwords {
+		err = json.Unmarshal(bytes, &sF)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		sFs = append(sFs, sF)
+	}
+
+	if len(sFs) == 0 {
+		fmt.Println("Сохраненные файлы отсутствуют")
+
+		return errDataNil
+	}
+
+	fmt.Println("Список всех сохраненных файлов:")
+	for i, file := range sFs {
+		fmt.Println(i+1, " ", file.FileName)
+	}
+	for {
+		fmt.Println("Введите номер файла для сохранения:")
+		fmt.Fscan(os.Stdin, &number)
+		if !(number <= 0 || (number) > len(sFs)) {
+			break
+		}
+		fmt.Println("Несоответствующий номер")
+
+	}
+
+	file, err := os.Create(sFs[number-1].FileName)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	_, err = file.Write(sFs[number-1].FileData)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

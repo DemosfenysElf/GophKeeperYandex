@@ -27,8 +27,8 @@ func (s *serverKeeper) getReadALL(c echo.Context) error {
 		data, err = s.DB.ReadAllPassword(c.Request().Context(), userID)
 	case service.Read + service.Text:
 		data, err = s.DB.ReadAllText(c.Request().Context(), userID)
-	//case service.Read + service.Bin:
-	//	data, err = s.DB.ReadAllBin(c.Request().Context(), userID)
+	case service.Read + service.Bin:
+		data, err = s.DB.ReadAllBin(c.Request().Context(), userID)
 	default:
 		c.Response().WriteHeader(http.StatusInternalServerError)
 		return nil

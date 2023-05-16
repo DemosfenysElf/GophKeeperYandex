@@ -34,8 +34,8 @@ func (s *serverKeeper) postWrite(c echo.Context) error {
 		err = s.DB.WritePassword(c.Request().Context(), bodyToString, userID)
 	case service.Write + service.Text:
 		err = s.DB.WriteText(c.Request().Context(), bodyToString, userID)
-	//case service.Write + service.Bin:
-	//	err = s.DB.WriteBin(c.Request().Context(), bodyToString, userID)
+	case service.Write + service.Bin:
+		err = s.DB.WriteBin(c.Request().Context(), bodyToString, userID)
 	default:
 		c.Response().WriteHeader(http.StatusInternalServerError)
 		return nil

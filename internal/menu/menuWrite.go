@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -27,6 +28,11 @@ type savePassword struct {
 type saveText struct {
 	TextName string
 	Text     string
+}
+
+type saveFile struct {
+	FileName string
+	FileData []byte
 }
 
 func (ad *allData) writeCard() {
@@ -131,6 +137,56 @@ func (ad *allData) writeText() {
 				return
 			}
 			err = ad.postWrite(marshal, "/write/text")
+			if err != nil {
+				fmt.Println("Ошибка отправки данных на сервер")
+				return
+			}
+			return
+
+		default:
+			fmt.Println("2. Цикл заново")
+		}
+	}
+}
+
+func (ad *allData) writeBin() {
+	var sF saveFile
+	var command int
+	for {
+		fmt.Println("Введите пару логин/пароль которые хотите сохранить.")
+		fmt.Print("Введите название путь до файла: ")
+		fmt.Fscan(os.Stdin, &sF.FileName)
+		//fmt.Print("Введите текст заметки: ")
+		//fmt.Fscan(os.Stdin, &sF.FileData)
+
+		//
+
+		file, err := os.Open(sF.FileName)
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		_, err = file.Read(sF.FileData)
+		if err != nil {
+			return
+		}
+		sF.FileName = file.Name()
+
+		//
+
+		fmt.Println("\nСохранить данные для ", sF.FileName, "?")
+		fmt.Println("Введите номер: \n 1. Сохранить \n 2. Ввести данные заново \n 3. Вернуться назад")
+		fmt.Fscan(os.Stdin, &command)
+		switch command {
+		case 3:
+			return
+		case 1:
+			marshal, err := json.Marshal(sF)
+			if err != nil {
+				fmt.Println("Ошибка при формировании данных для отправки на сервер")
+				return
+			}
+			err = ad.postWrite(marshal, "/write/bin")
 			if err != nil {
 				fmt.Println("Ошибка отправки данных на сервер")
 				return

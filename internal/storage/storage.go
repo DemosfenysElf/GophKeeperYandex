@@ -10,8 +10,6 @@ import (
 	"PasManagerGophKeeper/internal/service"
 )
 
-// write-readall на каждую таблицу
-// read (путь) для получения сохраненного файла
 type DBI interface {
 	Connect(ctx context.Context, connStr string) (err error)
 	Ping(ctx context.Context) error
@@ -27,6 +25,8 @@ type DBI interface {
 	ReadAllPassword(ctx context.Context, userID int) (passwordList []string, err error)
 	WriteText(ctx context.Context, data string, userID int) (err error)
 	ReadAllText(ctx context.Context, userID int) (textList []string, err error)
+	WriteBin(ctx context.Context, data string, userID int) (err error)
+	ReadAllBin(ctx context.Context, userID int) (binList []string, err error)
 }
 
 // регистрация
@@ -129,6 +129,24 @@ func (db *Database) WriteText(ctx context.Context, data string, userID int) (err
 
 func (db *Database) ReadAllText(ctx context.Context, userID int) (textList []string, err error) {
 	if err = db.connection.WithContext(ctx).Find(&textList, "user_id = ?", userID).Error; err != nil {
+		return nil, err
+	}
+	return
+}
+
+func (db *Database) WriteBin(ctx context.Context, data string, userID int) (err error) {
+	bin := Bin{
+		UserID: userID,
+		Data:   data,
+	}
+	if err = db.connection.WithContext(ctx).Create(&bin).Error; err != nil {
+		return err
+	}
+	return
+}
+
+func (db *Database) ReadAllBin(ctx context.Context, userID int) (binList []string, err error) {
+	if err = db.connection.WithContext(ctx).Find(&binList, "user_id = ?", userID).Error; err != nil {
 		return nil, err
 	}
 	return

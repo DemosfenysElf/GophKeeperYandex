@@ -14,6 +14,7 @@ type User struct {
 	Cards     []Card
 	Passwords []Password
 	Texts     []Text
+	Bins      []Bin
 }
 
 type Card struct {
@@ -35,10 +36,9 @@ type Text struct {
 }
 
 type Bin struct {
-	UserID    int
-	ID        int
-	Storage   string
-	OtherData string
+	UserID int
+	ID     int
+	Data   string
 }
 
 func (User) TableName() string {
