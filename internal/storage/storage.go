@@ -22,11 +22,11 @@ type DBI interface {
 	GetUserID(ctx context.Context, login string) (UserID int, err error)
 	//
 	WriteCard(ctx context.Context, data string, userID int) (err error)
-	ReadAllCard(ctx context.Context, userID int) (cardList []Card, err error)
+	ReadAllCard(ctx context.Context, userID int) (cardList []string, err error)
 	WritePassword(ctx context.Context, data string, userID int) (err error)
-	ReadAllPassword(ctx context.Context, userID int) (passwordList []Password, err error)
+	ReadAllPassword(ctx context.Context, userID int) (passwordList []string, err error)
 	WriteText(ctx context.Context, data string, userID int) (err error)
-	ReadAllText(ctx context.Context, userID int) (textList []Text, err error)
+	ReadAllText(ctx context.Context, userID int) (textList []string, err error)
 }
 
 // регистрация
@@ -91,8 +91,8 @@ func (db *Database) WriteCard(ctx context.Context, data string, userID int) (err
 	return
 }
 
-func (db *Database) ReadAllCard(ctx context.Context, userID int) (cardList []Card, err error) {
-	if err = db.connection.WithContext(ctx).Find(&cardList, "user_id = ?", userID).Error; err != nil {
+func (db *Database) ReadAllCard(ctx context.Context, userID int) (cardList []string, err error) {
+	if err = db.connection.WithContext(ctx).Table("card").Select("data").Where("user_id = ?", userID).Scan(&cardList).Error; err != nil {
 		return nil, err
 	}
 	return
@@ -109,7 +109,7 @@ func (db *Database) WritePassword(ctx context.Context, data string, userID int) 
 	return
 }
 
-func (db *Database) ReadAllPassword(ctx context.Context, userID int) (passwordList []Password, err error) {
+func (db *Database) ReadAllPassword(ctx context.Context, userID int) (passwordList []string, err error) {
 	if err = db.connection.WithContext(ctx).Find(&passwordList, "user_id = ?", userID).Error; err != nil {
 		return nil, err
 	}
@@ -127,7 +127,7 @@ func (db *Database) WriteText(ctx context.Context, data string, userID int) (err
 	return
 }
 
-func (db *Database) ReadAllText(ctx context.Context, userID int) (textList []Text, err error) {
+func (db *Database) ReadAllText(ctx context.Context, userID int) (textList []string, err error) {
 	if err = db.connection.WithContext(ctx).Find(&textList, "user_id = ?", userID).Error; err != nil {
 		return nil, err
 	}

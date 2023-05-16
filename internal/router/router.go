@@ -24,7 +24,7 @@ type serverKeeper struct {
 }
 
 func InitServer() *serverKeeper {
-	return &serverKeeper{}
+	return &serverKeeper{Cfg: Config{ServerAddress: ":8080"}}
 }
 
 func (s serverKeeper) Router() error {
@@ -37,20 +37,18 @@ func (s serverKeeper) Router() error {
 
 	e := echo.New()
 
-	e.Use(s.mwAuthentication)
-
 	e.POST("/api/user/register", s.postAPIUserRegister)
 	e.POST("/api/user/login", s.postAPIUserLogin)
 
-	e.POST("/write/card", s.postWrite)
-	e.POST("/write/password", s.postWrite)
-	e.POST("/write/text", s.postWrite)
-	e.POST("/write/bin", s.postWrite)
+	e.POST("/write/card", s.postWrite, s.mwAuthentication)
+	e.POST("/write/password", s.postWrite, s.mwAuthentication)
+	e.POST("/write/text", s.postWrite, s.mwAuthentication)
+	e.POST("/write/bin", s.postWrite, s.mwAuthentication)
 
-	e.GET("/read/card", s.getReadALL)
-	e.GET("/read/password", s.getReadALL)
-	e.GET("/read/text", s.getReadALL)
-	e.GET("/read/bin", s.getReadALL)
+	e.GET("/read/card", s.getReadALL, s.mwAuthentication)
+	e.GET("/read/password", s.getReadALL, s.mwAuthentication)
+	e.GET("/read/text", s.getReadALL, s.mwAuthentication)
+	e.GET("/read/bin", s.getReadALL, s.mwAuthentication)
 
 	err := e.Start(s.Cfg.ServerAddress)
 	if err != nil {

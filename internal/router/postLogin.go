@@ -13,13 +13,13 @@ import (
 	"PasManagerGophKeeper/internal/service"
 )
 
-type registration struct {
+type User struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`
 }
 
 func (s *serverKeeper) postAPIUserLogin(c echo.Context) error {
-	var userLog registration
+	var userLog User
 	defer c.Request().Body.Close()
 	body, err := io.ReadAll(c.Request().Body)
 	if err != nil {
@@ -48,7 +48,7 @@ func (s *serverKeeper) postAPIUserLogin(c echo.Context) error {
 }
 
 func (s *serverKeeper) postAPIUserRegister(c echo.Context) error {
-	var userLog registration
+	var userLog User
 	defer c.Request().Body.Close()
 	body, err := io.ReadAll(c.Request().Body)
 	if err != nil {

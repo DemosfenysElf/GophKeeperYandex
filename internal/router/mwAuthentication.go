@@ -33,7 +33,7 @@ func (s *serverKeeper) mwAuthentication(next echo.HandlerFunc) echo.HandlerFunc 
 			return nil
 		}
 
-		c.Set("user", claims.Login)
+		c.Set(service.User, claims.Login)
 		return next(c)
 	}
 }

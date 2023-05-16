@@ -1,6 +1,7 @@
 package router
 
 import (
+	"encoding/hex"
 	"io"
 	"net/http"
 
@@ -17,23 +18,24 @@ func (s *serverKeeper) postWrite(c echo.Context) error {
 		return nil
 	}
 
-	user := c.Get("user")
+	user := c.Get(service.User)
 	userID, err := s.DB.GetUserID(c.Request().Context(), user.(string))
 	if err != nil {
-		return err
+		c.Response().WriteHeader(http.StatusInternalServerError)
+		return nil
 	}
-	bodyOrder := string(body)
+	bodyToString := hex.EncodeToString(body)
 
 	path := c.Request().URL.Path
 	switch path {
 	case service.Write + service.Card:
-		err = s.DB.WriteCard(c.Request().Context(), bodyOrder, userID)
+		err = s.DB.WriteCard(c.Request().Context(), bodyToString, userID)
 	case service.Write + service.Password:
-		err = s.DB.WritePassword(c.Request().Context(), bodyOrder, userID)
+		err = s.DB.WritePassword(c.Request().Context(), bodyToString, userID)
 	case service.Write + service.Text:
-		err = s.DB.WriteText(c.Request().Context(), bodyOrder, userID)
-	case service.Write + service.Bin:
-		err = s.DB.WriteText(c.Request().Context(), bodyOrder, userID)
+		err = s.DB.WriteText(c.Request().Context(), bodyToString, userID)
+	//case service.Write + service.Bin:
+	//	err = s.DB.WriteBin(c.Request().Context(), bodyToString, userID)
 	default:
 		c.Response().WriteHeader(http.StatusInternalServerError)
 		return nil

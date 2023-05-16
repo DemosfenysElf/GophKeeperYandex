@@ -8,7 +8,8 @@ import (
 )
 
 // пока здесь все константы, ещё не знаю куда их девать
-const keyJWT = "pqla3zxjonfgwouhf"
+var keyJWT = []byte("pqla3zxjonfgwouhf")
+
 const (
 	Authorization = "Authorization"
 	Bearer        = "Bearer"
