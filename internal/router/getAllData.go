@@ -21,7 +21,7 @@ func (s *serverKeeper) getReadALL(c echo.Context) error {
 
 	var data []string
 	path := c.Request().URL.Path
-	typeData := strings.Trim(path, "/write/")
+	typeData := strings.Replace(path, "/read/", "", -1)
 	data, err = s.DB.ReadAllDataType(c.Request().Context(), userID, typeData)
 
 	if err != nil {

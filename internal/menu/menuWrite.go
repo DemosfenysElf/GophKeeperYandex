@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"PasManagerGophKeeper/internal/service"
 )
@@ -154,10 +156,8 @@ func (ad *allData) writeFile() {
 	var command int
 	for {
 		fmt.Println("Введите пару логин/пароль которые хотите сохранить.")
-		fmt.Print("Введите название путь до файла: ")
+		fmt.Print("Введите название и путь до файла: ")
 		fmt.Fscan(os.Stdin, &sF.FileName)
-		//fmt.Print("Введите текст заметки: ")
-		//fmt.Fscan(os.Stdin, &sF.FileData)
 
 		//
 
@@ -165,13 +165,19 @@ func (ad *allData) writeFile() {
 		if err != nil {
 			log.Fatalln(err)
 		}
+		defer file.Close()
 
-		_, err = file.Read(sF.FileData)
-		if err != nil {
-			return
+		data := make([]byte, 64)
+		for {
+			_, err := file.Read(data)
+			if err == io.EOF { // если конец файла
+				break // выходим из цикла
+			}
 		}
-		sF.FileName = file.Name()
+		sF.FileData = data
 
+		split := strings.Split(file.Name(), "\\")
+		sF.FileName = split[len(split)-1]
 		//
 
 		fmt.Println("\nСохранить данные для ", sF.FileName, "?")

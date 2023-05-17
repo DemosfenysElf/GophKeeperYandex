@@ -183,11 +183,16 @@ func (ad allData) readFile() error {
 		fmt.Println("Несоответствующий номер")
 
 	}
-
-	file, err := os.Create(sFs[number-1].FileName)
+	fileName := "C:\\Users\\Demos\\Downloads\\" + sFs[number-1].FileName
+	file, err := os.Create(fileName)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	//file, err = os.Open(fileName)
+	//if err != nil {
+	//	log.Fatalln(err)
+	//}
+	defer file.Close()
 	_, err = file.Write(sFs[number-1].FileData)
 	if err != nil {
 		return err

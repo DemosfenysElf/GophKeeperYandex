@@ -28,7 +28,7 @@ func (s *serverKeeper) postWrite(c echo.Context) error {
 	bodyToString := hex.EncodeToString(body)
 
 	path := c.Request().URL.Path
-	typeData := strings.Trim(path, "/write/")
+	typeData := strings.Replace(path, "/write/", "", -1)
 	err = s.DB.WriteData(c.Request().Context(), bodyToString, userID, typeData)
 
 	if err != nil {

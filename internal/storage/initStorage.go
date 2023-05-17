@@ -14,16 +14,10 @@ type User struct {
 	Cards    []DataTable
 }
 
-// да, тут 4 одинаковые структуры для создания 4 таблиц
-// с одной стороны я понимаю что это можно запихнуть в одну таблицу
-// но с другой стороны я просто не знаю как надо правильно и в чём смысл
-// когда я начинал это делать таблицы были разные
-
-// Структуры для создания таблиц по наименованиям
 type DataTable struct {
 	UserID   int
 	ID       int
-	typeData string
+	TypeData string
 	Data     string
 }
 
@@ -32,7 +26,7 @@ func (User) TableName() string {
 }
 
 func (DataTable) TableName() string {
-	return "allData"
+	return "data"
 }
 
 type Database struct {

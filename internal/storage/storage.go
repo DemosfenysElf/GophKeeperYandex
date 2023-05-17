@@ -78,7 +78,7 @@ func (db *Database) GetUserID(ctx context.Context, login string) (UserID int, er
 func (db *Database) WriteData(ctx context.Context, data string, userID int, typeData string) (err error) {
 	oneData := DataTable{
 		UserID:   userID,
-		typeData: typeData,
+		TypeData: typeData,
 		Data:     data,
 	}
 	if err = db.connection.WithContext(ctx).Create(&oneData).Error; err != nil {
@@ -89,7 +89,7 @@ func (db *Database) WriteData(ctx context.Context, data string, userID int, type
 
 // ReadAllDataType получение массива сохраненных данных из таблицы
 func (db *Database) ReadAllDataType(ctx context.Context, userID int, typeData string) (dataList []string, err error) {
-	if err = db.connection.WithContext(ctx).Table("card").Select("data").
+	if err = db.connection.WithContext(ctx).Table("data").Select("data").
 		Where("user_id = ?", userID).Where("type_data = ?", typeData).Scan(&dataList).Error; err != nil {
 		return nil, err
 	}
