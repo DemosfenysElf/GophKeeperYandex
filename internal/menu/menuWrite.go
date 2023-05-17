@@ -149,7 +149,7 @@ func (ad *allData) writeText() {
 	}
 }
 
-func (ad *allData) writeBin() {
+func (ad *allData) writeFile() {
 	var sF saveFile
 	var command int
 	for {

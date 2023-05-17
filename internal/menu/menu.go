@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-func (ad *allData) Operations() {
+func (ad *allData) operations() {
 	var command int
 	for {
 		fmt.Println("Выберите действие.\nВведите номер: \n 1. Запись данных \n 2. Чтение данных \n 3. Выход")
@@ -18,52 +18,62 @@ func (ad *allData) Operations() {
 		case 3:
 			return
 		}
-		fmt.Println("Введите команду:")
+		fmt.Println("Необходимо ввести команду.")
 	}
 }
 
 func (ad *allData) writeData() {
 	var command int
 	for {
-		fmt.Println("Какие данные вы хотите записать?\nВведите номер: \n 1. Card \n 2. Password \n 3. Текст \n 4. Вернуться назад")
+		fmt.Println("Какие данные вы хотите записать?\nВведите номер: \n " +
+			"1. Данные банковской карты \n 2. Пару Логин/Пароль \n 3. Текст \n  4. Файл \n 5. Вернуться назад")
 		fmt.Fscan(os.Stdin, &command)
 		switch command {
 		case 1:
-			fmt.Println("1. Card")
 			ad.writeCard()
 		case 2:
-			fmt.Println("2. Password")
 			ad.writePassword()
 		case 3:
-			fmt.Println("3. Текст")
 			ad.writeText()
-
 		case 4:
+			ad.writeFile()
+		case 5:
 			return
 		}
-		fmt.Println("Введите команду:")
+		fmt.Println("Необходимо ввести команду.")
 	}
 }
 
 func (ad *allData) readData() {
 	var command int
 	for {
-		fmt.Println("Какие данные вы хотите посмотреть?\nВведите номер: \n 1. Card \n 2. Password \n 3. Text \n 4. Вернуться назад")
+		fmt.Println("Какие данные вы хотите получить?\nВведите номер: \n " +
+			"1. Данные банковской карты \n 2. Пару Логин/Пароль \n 3. Текст \n  4. Файл \n 5. Вернуться назад")
 		fmt.Fscan(os.Stdin, &command)
 		switch command {
 		case 1:
-			fmt.Println("1. Card")
 			err := ad.readCard()
 			if err != nil {
 				return
 			}
 		case 2:
-			fmt.Println("2. Password")
+			err := ad.readPassword()
+			if err != nil {
+				return
+			}
 		case 3:
-			fmt.Println("3. Text")
+			err := ad.readText()
+			if err != nil {
+				return
+			}
 		case 4:
+			err := ad.readFile()
+			if err != nil {
+				return
+			}
+		case 5:
 			return
 		}
-		fmt.Println("Введите команду:")
+		fmt.Println("Необходимо ввести команду.")
 	}
 }

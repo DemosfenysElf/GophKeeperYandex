@@ -14,9 +14,9 @@ func initData() *allData {
 
 func StartClient() {
 	client := initData()
-	client.CheakUser()
-	if client.tokenJWT == "" {
+	err := client.cheakUser()
+	if (err != nil) || (client.tokenJWT == "") {
 		return
 	}
-	client.Operations()
+	client.operations()
 }

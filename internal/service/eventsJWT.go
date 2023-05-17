@@ -32,7 +32,7 @@ func DecodeJWT(headertoken string) (Claims *ClaimsUser, err error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
 		}
-		return []byte(keyJWT), nil
+		return keyJWT, nil
 	})
 	if err != nil {
 		return nil, err

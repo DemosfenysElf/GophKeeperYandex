@@ -15,8 +15,9 @@ var errFailPost = fmt.Errorf("ошибка при попытке отправк�
 var errDuplicateLogin = fmt.Errorf("ввёденный логин уже занят, выберите другой")
 var errAllBroken = fmt.Errorf("всё поломалось, непредвиденная ошибка")
 var errDataNil = fmt.Errorf("нет сохраненных данных")
+var noErrExit = fmt.Errorf("выход")
 
-func (ad *allData) CheakUser() {
+func (ad *allData) cheakUser() error {
 	var command int
 	for {
 		fmt.Println("Выберите действие.\nВведите номер: \n 1. Регистрация нового пользователя \n 2. Логин \n 3. Выход")
@@ -24,32 +25,34 @@ func (ad *allData) CheakUser() {
 		switch command {
 		case 1:
 			ad.registration()
-			return
+			return nil
 		case 2:
 			ad.loginUser()
-			return
+			return nil
 		case 3:
-			return
+			return noErrExit
+		default:
+			fmt.Println("Введено неправильное число.")
 		}
 		fmt.Println("Введите команду:")
 	}
 
 }
 
-func (ad *allData) loginUser() {
+func (ad *allData) registration() {
 	for {
 		logpas := ad.testLogPass()
-		err := ad.postLogin(logpas)
+		err := ad.postRegistration(logpas)
 		if err == nil {
 			break
 		}
 	}
 }
 
-func (ad *allData) registration() {
+func (ad *allData) loginUser() {
 	for {
 		logpas := ad.testLogPass()
-		err := ad.postRegistration(logpas)
+		err := ad.postLogin(logpas)
 		if err == nil {
 			break
 		}
@@ -116,8 +119,8 @@ func (ad *allData) testLogPass() []byte {
 		fmt.Fscan(os.Stdin, &newUser.Login)
 	}
 
-	for (len(newUser.Password) != 16) && (!isTrueSym(newUser.Password)) {
-		fmt.Println("Введите пароль\nПароль должен состоять из латинских букв и цифр\n и содержать 16 символов")
+	for (!isTrueLen(newUser.Password)) && (!isTrueSym(newUser.Password)) {
+		fmt.Println("Введите пароль\nПароль должен состоять из латинских букв и цифр\n и содержать 8-16 символов")
 		fmt.Fscan(os.Stdin, &newUser.Password)
 	}
 	ad.login = newUser.Login
@@ -134,6 +137,13 @@ func isTrueSym(str string) bool {
 		if ((r > '\u002F') && (r < '\u003A')) || ((r > '\u0040') && (r < '\u005B')) {
 			return true
 		}
+	}
+	return false
+}
+
+func isTrueLen(str string) bool {
+	if len(str) >= 8 && len(str) <= 16 {
+		return true
 	}
 	return false
 }
