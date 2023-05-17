@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo"
 
@@ -20,19 +21,8 @@ func (s *serverKeeper) getReadALL(c echo.Context) error {
 
 	var data []string
 	path := c.Request().URL.Path
-	switch path {
-	case service.Read + service.Card:
-		data, err = s.DB.ReadAllCard(c.Request().Context(), userID)
-	case service.Read + service.Password:
-		data, err = s.DB.ReadAllPassword(c.Request().Context(), userID)
-	case service.Read + service.Text:
-		data, err = s.DB.ReadAllText(c.Request().Context(), userID)
-	case service.Read + service.Bin:
-		data, err = s.DB.ReadAllBin(c.Request().Context(), userID)
-	default:
-		c.Response().WriteHeader(http.StatusInternalServerError)
-		return nil
-	}
+	typeData := strings.Trim(path, "/write/")
+	data, err = s.DB.ReadAllDataType(c.Request().Context(), userID, typeData)
 
 	if err != nil {
 		c.Response().WriteHeader(http.StatusInternalServerError)
@@ -42,14 +32,15 @@ func (s *serverKeeper) getReadALL(c echo.Context) error {
 	for _, datum := range data {
 		decodeString, err := hex.DecodeString(datum)
 		if err != nil {
+			c.Response().WriteHeader(http.StatusInternalServerError)
 			return err
 		}
 		dataByte = append(dataByte, decodeString)
-
 	}
 
 	marshalData, err := json.Marshal(dataByte)
 	if err != nil {
+		c.Response().WriteHeader(http.StatusInternalServerError)
 		return err
 	}
 

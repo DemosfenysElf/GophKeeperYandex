@@ -8,13 +8,10 @@ import (
 )
 
 type User struct {
-	ID        int
-	Login     string `gorm:"uniqueIndex"`
-	Password  string
-	Cards     []Card
-	Passwords []Password
-	Texts     []Text
-	Bins      []Bin
+	ID       int
+	Login    string `gorm:"uniqueIndex"`
+	Password string
+	Cards    []DataTable
 }
 
 // да, тут 4 одинаковые структуры для создания 4 таблиц
@@ -23,48 +20,19 @@ type User struct {
 // когда я начинал это делать таблицы были разные
 
 // Структуры для создания таблиц по наименованиям
-type Card struct {
-	UserID int
-	ID     int
-	Data   string
-}
-
-type Password struct {
-	UserID int
-	ID     int
-	Data   string
-}
-
-type Text struct {
-	UserID int
-	ID     int
-	Data   string
-}
-
-type Bin struct {
-	UserID int
-	ID     int
-	Data   string
+type DataTable struct {
+	UserID   int
+	ID       int
+	typeData string
+	Data     string
 }
 
 func (User) TableName() string {
 	return "users"
 }
 
-func (Password) TableName() string {
-	return "password"
-}
-
-func (Text) TableName() string {
-	return "text"
-}
-
-func (Bin) TableName() string {
-	return "binare"
-}
-
-func (Card) TableName() string {
-	return "card"
+func (DataTable) TableName() string {
+	return "allData"
 }
 
 type Database struct {
@@ -83,10 +51,8 @@ func (db *Database) Connect(ctx context.Context, connStr string) (err error) {
 
 	db.connection = pdb
 	pdb.AutoMigrate(&User{})
-	pdb.AutoMigrate(&Password{})
-	pdb.AutoMigrate(&Text{})
-	pdb.AutoMigrate(&Bin{})
-	pdb.AutoMigrate(&Card{})
+	pdb.AutoMigrate(&DataTable{})
+
 	return nil
 }
 

@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo"
 
@@ -27,19 +28,9 @@ func (s *serverKeeper) postWrite(c echo.Context) error {
 	bodyToString := hex.EncodeToString(body)
 
 	path := c.Request().URL.Path
-	switch path {
-	case service.Write + service.Card:
-		err = s.DB.WriteCard(c.Request().Context(), bodyToString, userID)
-	case service.Write + service.Password:
-		err = s.DB.WritePassword(c.Request().Context(), bodyToString, userID)
-	case service.Write + service.Text:
-		err = s.DB.WriteText(c.Request().Context(), bodyToString, userID)
-	case service.Write + service.Bin:
-		err = s.DB.WriteBin(c.Request().Context(), bodyToString, userID)
-	default:
-		c.Response().WriteHeader(http.StatusInternalServerError)
-		return nil
-	}
+	typeData := strings.Trim(path, "/write/")
+	err = s.DB.WriteData(c.Request().Context(), bodyToString, userID, typeData)
+
 	if err != nil {
 		c.Response().WriteHeader(http.StatusInternalServerError)
 		return nil
