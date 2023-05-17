@@ -26,7 +26,7 @@ func StartClient() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	client.LocalDownloads += "\\Downloads"
+	client.LocalDownloads += `\Downloads\`
 
 	err = client.cheakUser()
 	if (err != nil) || (client.tokenJWT == "") {

@@ -183,7 +183,9 @@ func (ad allData) readFile() error {
 		fmt.Println("Несоответствующий номер")
 
 	}
+
 	fileName := ad.LocalDownloads + sFs[number-1].FileName
+	fmt.Println("Файл будет сохранён в: ", fileName)
 	file, err := os.Create(fileName)
 	if err != nil {
 		log.Fatalln(err)
