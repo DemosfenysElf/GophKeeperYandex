@@ -29,7 +29,7 @@ type DBI interface {
 	ReadAllBin(ctx context.Context, userID int) (binList []string, err error)
 }
 
-// регистрация
+// RegisterUser регистрация пользователя
 func (db *Database) RegisterUser(ctx context.Context, login string, pass string) (tokenJWT string, err error) {
 	h := md5.New()
 	h.Write([]byte(pass))
@@ -50,7 +50,7 @@ func (db *Database) RegisterUser(ctx context.Context, login string, pass string)
 	return tokenJWT, nil
 }
 
-// авторизация
+// LoginUser авторизация пользователя
 func (db *Database) LoginUser(ctx context.Context, login string, pass string) (tokenJWT string, err error) {
 	h := md5.New()
 	h.Write([]byte(pass))
@@ -71,7 +71,7 @@ func (db *Database) LoginUser(ctx context.Context, login string, pass string) (t
 	return tokenJWT, nil
 }
 
-// получение userID
+// GetUserID получение userID, для дальнейшего сохранения данных пользователя в таблицы
 func (db *Database) GetUserID(ctx context.Context, login string) (UserID int, err error) {
 	user := User{}
 	if err = db.connection.WithContext(ctx).Find(&user, "login = ?", login).Error; err != nil {
@@ -80,6 +80,7 @@ func (db *Database) GetUserID(ctx context.Context, login string) (UserID int, er
 	return user.ID, nil
 }
 
+// WriteCard сохранение закодированных данных банковской карты в таблицу
 func (db *Database) WriteCard(ctx context.Context, data string, userID int) (err error) {
 	card := Card{
 		UserID: userID,
@@ -91,6 +92,7 @@ func (db *Database) WriteCard(ctx context.Context, data string, userID int) (err
 	return
 }
 
+// ReadAllCard получение массива сохраненных данных банковской карты из таблицы
 func (db *Database) ReadAllCard(ctx context.Context, userID int) (cardList []string, err error) {
 	if err = db.connection.WithContext(ctx).Table("card").Select("data").Where("user_id = ?", userID).Scan(&cardList).Error; err != nil {
 		return nil, err
@@ -98,6 +100,7 @@ func (db *Database) ReadAllCard(ctx context.Context, userID int) (cardList []str
 	return
 }
 
+// WritePassword сохранение закодированной пары логин-пароль в таблицу
 func (db *Database) WritePassword(ctx context.Context, data string, userID int) (err error) {
 	password := Password{
 		UserID: userID,
@@ -109,6 +112,7 @@ func (db *Database) WritePassword(ctx context.Context, data string, userID int) 
 	return
 }
 
+// ReadAllPassword получение массива сохраненных пар логин-пароль из таблицы
 func (db *Database) ReadAllPassword(ctx context.Context, userID int) (passwordList []string, err error) {
 	if err = db.connection.WithContext(ctx).Find(&passwordList, "user_id = ?", userID).Error; err != nil {
 		return nil, err
@@ -116,6 +120,7 @@ func (db *Database) ReadAllPassword(ctx context.Context, userID int) (passwordLi
 	return
 }
 
+// WriteText сохранение закодированной текстовой заметки в таблицу
 func (db *Database) WriteText(ctx context.Context, data string, userID int) (err error) {
 	text := Text{
 		UserID: userID,
@@ -127,6 +132,7 @@ func (db *Database) WriteText(ctx context.Context, data string, userID int) (err
 	return
 }
 
+// ReadAllText получение массива сохраненных текстовых заметок из таблицы
 func (db *Database) ReadAllText(ctx context.Context, userID int) (textList []string, err error) {
 	if err = db.connection.WithContext(ctx).Find(&textList, "user_id = ?", userID).Error; err != nil {
 		return nil, err
@@ -134,6 +140,7 @@ func (db *Database) ReadAllText(ctx context.Context, userID int) (textList []str
 	return
 }
 
+// WriteBin сохранение закодированного файла в таблицу
 func (db *Database) WriteBin(ctx context.Context, data string, userID int) (err error) {
 	bin := Bin{
 		UserID: userID,
@@ -145,6 +152,7 @@ func (db *Database) WriteBin(ctx context.Context, data string, userID int) (err 
 	return
 }
 
+// ReadAllBin получение массива сохраненных файлов из таблицы
 func (db *Database) ReadAllBin(ctx context.Context, userID int) (binList []string, err error) {
 	if err = db.connection.WithContext(ctx).Find(&binList, "user_id = ?", userID).Error; err != nil {
 		return nil, err
