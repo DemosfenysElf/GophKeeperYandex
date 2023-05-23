@@ -65,3 +65,8 @@ func (db *Database) Ping(ctx context.Context) error {
 	}
 	return nil
 }
+
+// SetConnection для тестирования с помощью mock
+func (db *Database) SetConnection(conn *gorm.DB) {
+	db.connection = conn
+}

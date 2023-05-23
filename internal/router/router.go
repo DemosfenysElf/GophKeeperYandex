@@ -27,7 +27,7 @@ func InitServer() *serverKeeper {
 	return &serverKeeper{Cfg: Config{ServerAddress: ":8080"}}
 }
 
-func (s serverKeeper) Router() error {
+func (s serverKeeper) StartServer() error {
 	if err := s.parseFlagCfg(); err != nil {
 		return err
 	}
@@ -37,6 +37,16 @@ func (s serverKeeper) Router() error {
 
 	e := echo.New()
 
+	s.initRouter(e)
+
+	err := e.Start(s.Cfg.ServerAddress)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *serverKeeper) initRouter(e *echo.Echo) {
 	e.POST("/api/user/register", s.postAPIUserRegister)
 	e.POST("/api/user/login", s.postAPIUserLogin)
 
@@ -49,13 +59,8 @@ func (s serverKeeper) Router() error {
 	e.GET("/read/password", s.getReadALL, s.mwAuthentication)
 	e.GET("/read/text", s.getReadALL, s.mwAuthentication)
 	e.GET("/read/bin", s.getReadALL, s.mwAuthentication)
-
-	err := e.Start(s.Cfg.ServerAddress)
-	if err != nil {
-		return err
-	}
-	return nil
 }
+
 func (s *serverKeeper) connectDB() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()

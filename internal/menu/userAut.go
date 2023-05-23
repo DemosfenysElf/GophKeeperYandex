@@ -2,6 +2,7 @@ package menu
 
 import (
 	"bytes"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -15,7 +16,7 @@ var errFailPost = fmt.Errorf("ошибка при попытке отправк�
 var errDuplicateLogin = fmt.Errorf("ввёденный логин уже занят, выберите другой")
 var errAllBroken = fmt.Errorf("всё поломалось, непредвиденная ошибка")
 var errDataNil = fmt.Errorf("нет сохраненных данных")
-var noErrExit = fmt.Errorf("выход")
+var errExit = fmt.Errorf("выход")
 
 func (ad *allData) cheakUser() error {
 	var command int
@@ -30,7 +31,7 @@ func (ad *allData) cheakUser() error {
 			ad.loginUser()
 			return nil
 		case 3:
-			return noErrExit
+			return errExit
 		default:
 			fmt.Println("Введено неправильное число.")
 		}
@@ -113,6 +114,8 @@ func (ad *allData) postLogin(logpas []byte) error {
 }
 
 func (ad *allData) testLogPass() []byte {
+	var key = "u0283tyuhgjfn"
+
 	newUser := router.User{}
 	for (len(newUser.Login) == 0) && (!isTrueSym(newUser.Login)) {
 		fmt.Println("Введите логин\nЛогин должен состоять из латинских букв и цифр")
@@ -125,6 +128,15 @@ func (ad *allData) testLogPass() []byte {
 	}
 	ad.login = newUser.Login
 	ad.password = newUser.Password
+
+	//
+	hexPassword := []byte(newUser.Password)
+	crypt, err := service.EnCrypt(hexPassword, key)
+	if err != nil {
+		return nil
+	}
+	newUser.Password = hex.EncodeToString(crypt)
+
 	marshalUser, err := json.Marshal(newUser)
 	if err != nil {
 		return nil

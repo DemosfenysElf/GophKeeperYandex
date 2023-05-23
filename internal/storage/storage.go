@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"gorm.io/gorm"
 
 	"PasManagerGophKeeper/internal/service"
 )
@@ -21,6 +22,8 @@ type DBI interface {
 
 	WriteData(ctx context.Context, data string, userID int, typeData string) (err error)
 	ReadAllDataType(ctx context.Context, userID int, typeData string) (dataList []string, err error)
+
+	SetConnection(conn *gorm.DB)
 }
 
 // RegisterUser регистрация пользователя

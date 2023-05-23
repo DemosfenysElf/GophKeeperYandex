@@ -23,11 +23,11 @@ func (s *serverKeeper) getReadALL(c echo.Context) error {
 	path := c.Request().URL.Path
 	typeData := strings.Replace(path, "/read/", "", -1)
 	data, err = s.DB.ReadAllDataType(c.Request().Context(), userID, typeData)
-
 	if err != nil {
 		c.Response().WriteHeader(http.StatusInternalServerError)
 		return nil
 	}
+
 	var dataByte [][]byte
 	for _, datum := range data {
 		decodeString, err := hex.DecodeString(datum)

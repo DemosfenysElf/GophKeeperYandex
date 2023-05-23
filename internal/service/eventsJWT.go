@@ -14,12 +14,6 @@ const (
 	Authorization = "Authorization"
 	Bearer        = "Bearer"
 	User          = "user"
-	Write         = "/write"
-	Read          = "/read"
-	Card          = "/card"
-	Text          = "/text"
-	Password      = "/password"
-	Bin           = "/bin"
 )
 
 type ClaimsUser struct {
@@ -49,7 +43,7 @@ func DecodeJWT(headertoken string) (Claims *ClaimsUser, err error) {
 func EncodeJWT(login string) (token string, err error) {
 	userClaims := ClaimsUser{
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Minute * 9999).Unix(),
+			ExpiresAt: time.Now().Add(time.Minute * 1).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
 		Login: login,

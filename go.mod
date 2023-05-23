@@ -3,6 +3,7 @@ module PasManagerGophKeeper
 go 1.19
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa
