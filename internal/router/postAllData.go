@@ -11,6 +11,7 @@ import (
 	"PasManagerGophKeeper/internal/service"
 )
 
+// postWrite сохранение в бд данных в зависимости от пути роута
 func (s *serverKeeper) postWrite(c echo.Context) error {
 	defer c.Request().Body.Close()
 	body, err := io.ReadAll(c.Request().Body)

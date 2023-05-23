@@ -11,6 +11,7 @@ import (
 	"PasManagerGophKeeper/internal/service"
 )
 
+// readCard получение списка сохраненных записей банковских карт и конкретной сохраненной записи
 func (ad allData) readCard() error {
 	var bC bankCard
 	var bCs []bankCard
@@ -58,6 +59,7 @@ func (ad allData) readCard() error {
 	return nil
 }
 
+// readPassword получение списка сохраненных записей связок логин-пароль и конкретной сохраненной связки
 func (ad allData) readPassword() error {
 	var sP savePassword
 	var sPs []savePassword
@@ -101,6 +103,7 @@ func (ad allData) readPassword() error {
 	return nil
 }
 
+// readText получение списка сохраненных текстовых заметок и конкретной сохраненной заметки
 func (ad allData) readText() error {
 	var sT saveText
 	var sTs []saveText
@@ -145,6 +148,7 @@ func (ad allData) readText() error {
 	return nil
 }
 
+// readFile получение списка сохраненных файлов и конкретного сохраненного файла
 func (ad allData) readFile() error {
 	var sF saveFile
 	var sFs []saveFile
@@ -200,6 +204,7 @@ func (ad allData) readFile() error {
 	return nil
 }
 
+// getRead отправка запроса на сервер для получения списка сохраненных данных и его расшифровка
 func (ad allData) getRead(operation string) ([][]byte, error) {
 	get := ad.serverAddress + operation
 	req, err := http.NewRequest("GET", get, nil)

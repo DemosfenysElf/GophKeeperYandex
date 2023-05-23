@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"regexp"
 	"testing"
@@ -27,6 +28,8 @@ func TestWrite(t *testing.T) {
 		ad       AllDataTest
 		idUser   int
 		port     string
+		errBD1   error
+		errBD2   error
 	}{
 		{
 			name: "Test1",
@@ -65,6 +68,42 @@ func TestWrite(t *testing.T) {
 			idUser: 1,
 			port:   ":8081",
 		},
+		{
+			name: "Test3",
+			text: saveText{
+				TextName: "card2",
+				Text:     "1222222222222",
+			},
+			typeOp:   "/write/text",
+			typeData: "text",
+			ad: AllDataTest{
+				login:    "login1",
+				password: "Password",
+
+				serverAddress: "http://localhost:8081",
+			},
+			idUser: 1,
+			port:   ":8081",
+			errBD1: errors.New("Просто ошибка"),
+		},
+		{
+			name: "Test4",
+			text: saveText{
+				TextName: "card2",
+				Text:     "1222222222222",
+			},
+			typeOp:   "/write/text",
+			typeData: "text",
+			ad: AllDataTest{
+				login:    "login1",
+				password: "Password",
+
+				serverAddress: "http://localhost:8081",
+			},
+			idUser: 1,
+			port:   ":8081",
+			errBD2: errors.New("Просто ошибка"),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -92,12 +131,12 @@ func TestWrite(t *testing.T) {
 			row := sqlmock.NewRows([]string{"ID", "Login", "Password"}).
 				AddRow(tt.idUser, tt.ad.login, "tt.user.password")
 			mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "users" WHERE `)).
-				WithArgs(tt.ad.login).WillReturnRows(row).WillReturnError(nil)
+				WithArgs(tt.ad.login).WillReturnRows(row).WillReturnError(tt.errBD1)
 			// writeData
 			mock.ExpectBegin()
 			mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "data" `)).
 				WithArgs(tt.idUser, tt.typeData, dataDBtoString).
-				WillReturnError(nil).WillReturnRows(sqlmock.NewRows([]string{"id"}))
+				WillReturnError(tt.errBD1).WillReturnRows(sqlmock.NewRows([]string{"id"}))
 			mock.ExpectCommit()
 
 			// server
@@ -117,7 +156,7 @@ func TestWrite(t *testing.T) {
 
 				// само тестирование
 				err = dataC.postWrite(marshalData, tt.typeOp)
-				if err != nil {
+				if (err != nil) && (tt.errBD1 == nil) && (tt.errBD2 == nil) {
 					t.Errorf("Я уже не понимаю что происходит 2 %s", err)
 				}
 

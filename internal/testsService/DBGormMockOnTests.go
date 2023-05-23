@@ -8,6 +8,7 @@ import (
 	"PasManagerGophKeeper/internal/storage"
 )
 
+// DBGormMockOnTests настройки БД для тестирования
 func DBGormMockOnTests() (*storage.Database, sqlmock.Sqlmock, error) {
 	db, mock, _ := sqlmock.New()
 

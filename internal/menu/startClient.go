@@ -6,6 +6,7 @@ import (
 	"github.com/caarlos0/env"
 )
 
+// allData конфигурация клиента
 type allData struct {
 	tokenJWT string
 	login    string
@@ -15,10 +16,12 @@ type allData struct {
 	LocalDownloads string `env:"USERPROFILE"` // или куда скачивать файлы
 }
 
+// initData инициализация клиента
 func initData() *allData {
 	return &allData{serverAddress: "http://localhost:8080"}
 }
 
+// StartClient запуск клиента
 func StartClient() {
 	client := initData()
 

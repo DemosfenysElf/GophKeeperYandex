@@ -37,6 +37,7 @@ type saveFile struct {
 	FileData []byte
 }
 
+// writeCard создание записи для отправки на сервер
 func (ad *allData) writeCard() {
 	var bC bankCard
 	var command int
@@ -78,6 +79,7 @@ func (ad *allData) writeCard() {
 	}
 }
 
+// writePassword создание записи для отправки на сервер
 func (ad *allData) writePassword() {
 	var sP savePassword
 	var command int
@@ -116,6 +118,7 @@ func (ad *allData) writePassword() {
 	}
 }
 
+// writeText создание записи для отправки на сервер
 func (ad *allData) writeText() {
 	var sT saveText
 	var command int
@@ -151,6 +154,7 @@ func (ad *allData) writeText() {
 	}
 }
 
+// writeFile создание записи для отправки на сервер
 func (ad *allData) writeFile() {
 	var sF saveFile
 	var command int
@@ -205,6 +209,7 @@ func (ad *allData) writeFile() {
 	}
 }
 
+// postWrite отправка замаршеленной и закодированной записи на сервер
 func (ad *allData) postWrite(data []byte, operation string) error {
 	cryptData, err := service.EnCrypt(data, ad.password)
 	if err != nil {

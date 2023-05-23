@@ -11,6 +11,7 @@ import (
 	"PasManagerGophKeeper/internal/service"
 )
 
+// getReadALL получение массива записанных данных в зависимости от пути роута
 func (s *serverKeeper) getReadALL(c echo.Context) error {
 	user := c.Get(service.User)
 	userID, err := s.DB.GetUserID(c.Request().Context(), user.(string))

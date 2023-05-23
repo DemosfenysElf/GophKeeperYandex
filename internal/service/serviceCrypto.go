@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// EnCrypt шифрование по ключу
 func EnCrypt(message []byte, key string) ([]byte, error) {
 	sum := md5.Sum([]byte(key))
 	key16 := sum[:]
@@ -28,6 +29,7 @@ func EnCrypt(message []byte, key string) ([]byte, error) {
 	return encMessage, nil
 }
 
+// DeCrypt дешифрование по ключу
 func DeCrypt(encMessage []byte, key string) ([]byte, error) {
 	sum := md5.Sum([]byte(key))
 	key16 := sum[:]

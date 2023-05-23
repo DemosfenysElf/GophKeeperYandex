@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+// operations меню выбора операций Запись и Чтение данных или Закрытие клиента
 func (ad *allData) operations() {
 	var command int
 	for {
@@ -22,6 +23,7 @@ func (ad *allData) operations() {
 	}
 }
 
+// writeData меню выбора какие данные будем записывать
 func (ad *allData) writeData() {
 	var command int
 	for {
@@ -44,6 +46,7 @@ func (ad *allData) writeData() {
 	}
 }
 
+// readData меню выбора какие данные будем читать
 func (ad *allData) readData() {
 	var command int
 	for {

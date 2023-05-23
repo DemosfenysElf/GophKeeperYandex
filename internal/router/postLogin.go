@@ -16,6 +16,7 @@ type User struct {
 	Password string `json:"password"`
 }
 
+// postAPIUserRegister регистрация нового пользователя
 func (s *serverKeeper) postAPIUserRegister(c echo.Context) error {
 	var userLog User
 	defer c.Request().Body.Close()
@@ -44,6 +45,7 @@ func (s *serverKeeper) postAPIUserRegister(c echo.Context) error {
 	return nil
 }
 
+// postAPIUserLogin вход в существующую учетную запись
 func (s *serverKeeper) postAPIUserLogin(c echo.Context) error {
 	var userLog User
 	defer c.Request().Body.Close()

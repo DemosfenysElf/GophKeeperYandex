@@ -9,6 +9,7 @@ import (
 	"PasManagerGophKeeper/internal/service"
 )
 
+// mwAuthentication проверка валидности JWT
 func (s *serverKeeper) mwAuthentication(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		headerAuth := c.Request().Header.Get(service.Authorization)

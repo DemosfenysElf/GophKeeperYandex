@@ -12,7 +12,6 @@ import (
 var key = "111111n"
 
 type AllDataTest struct {
-	tokenJWT string
 	login    string
 	password string
 

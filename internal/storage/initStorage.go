@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// User таблица пользователей
 type User struct {
 	ID       int
 	Login    string `gorm:"uniqueIndex"`
@@ -14,6 +15,7 @@ type User struct {
 	Cards    []DataTable
 }
 
+// DataTable таблица сохраненных данных
 type DataTable struct {
 	UserID   int
 	ID       int
@@ -33,10 +35,12 @@ type Database struct {
 	connection *gorm.DB
 }
 
+// InitDB инициализация БД
 func InitDB() (*Database, error) {
 	return &Database{}, nil
 }
 
+// Connect подключение к БД
 func (db *Database) Connect(ctx context.Context, connStr string) (err error) {
 	pdb, err := gorm.Open(postgres.Open(connStr), &gorm.Config{})
 	if err != nil {
@@ -58,6 +62,7 @@ func (db *Database) Close() error {
 	return db1.Close()
 }
 
+// Ping пинг БД
 func (db *Database) Ping(ctx context.Context) error {
 	db1, _ := db.connection.DB()
 	if err := db1.PingContext(ctx); err != nil {

@@ -16,11 +16,13 @@ const (
 	User          = "user"
 )
 
+// ClaimsUser структура для создания части JWT
 type ClaimsUser struct {
 	Login string `json:"Login"`
 	jwt.StandardClaims
 }
 
+// DecodeJWT проверка JWT на валидность
 func DecodeJWT(headertoken string) (Claims *ClaimsUser, err error) {
 	token, err := jwt.ParseWithClaims(headertoken, &ClaimsUser{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -40,6 +42,7 @@ func DecodeJWT(headertoken string) (Claims *ClaimsUser, err error) {
 	return claims, nil
 }
 
+// EncodeJWT кодирование логина в JWT
 func EncodeJWT(login string) (token string, err error) {
 	userClaims := ClaimsUser{
 		StandardClaims: jwt.StandardClaims{

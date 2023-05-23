@@ -12,12 +12,14 @@ import (
 	"PasManagerGophKeeper/internal/service"
 )
 
+// возможные ошибки
 var errFailPost = fmt.Errorf("ошибка при попытке отправки запроса на сервер")
 var errDuplicateLogin = fmt.Errorf("ввёденный логин уже занят, выберите другой")
 var errAllBroken = fmt.Errorf("всё поломалось, непредвиденная ошибка")
 var errDataNil = fmt.Errorf("нет сохраненных данных")
 var errExit = fmt.Errorf("выход")
 
+// cheakUser меню выбора входа в клиент
 func (ad *allData) cheakUser() error {
 	var command int
 	for {
@@ -40,6 +42,7 @@ func (ad *allData) cheakUser() error {
 
 }
 
+// registration регистрация нового пользователя
 func (ad *allData) registration() {
 	for {
 		logpas := ad.testLogPass()
@@ -50,6 +53,7 @@ func (ad *allData) registration() {
 	}
 }
 
+// loginUser вход под существующим пользователем
 func (ad *allData) loginUser() {
 	for {
 		logpas := ad.testLogPass()
@@ -60,6 +64,7 @@ func (ad *allData) loginUser() {
 	}
 }
 
+// postRegistration запрос на сервер для регистрации пользователя и входа в учетную запись
 func (ad *allData) postRegistration(logpas []byte) error {
 	postUrl := ad.serverAddress + "/api/user/register"
 	resp, err := http.Post(postUrl, "application/json", bytes.NewBuffer(logpas))
@@ -87,6 +92,7 @@ func (ad *allData) postRegistration(logpas []byte) error {
 	return errAllBroken
 }
 
+// postRegistration запрос на сервер для входа в учетную запись
 func (ad *allData) postLogin(logpas []byte) error {
 	postUrl := ad.serverAddress + "/api/user/login"
 	resp, err := http.Post(postUrl, "application/json", bytes.NewBuffer(logpas))
@@ -113,6 +119,7 @@ func (ad *allData) postLogin(logpas []byte) error {
 	return errAllBroken
 }
 
+// testLogPass меню ввода данных для входа или регистрации, с проверкой на валидность символов
 func (ad *allData) testLogPass() []byte {
 	var key = "u0283tyuhgjfn"
 
@@ -144,6 +151,7 @@ func (ad *allData) testLogPass() []byte {
 	return marshalUser
 }
 
+// isTrueSym проверерка на валидность символов
 func isTrueSym(str string) bool {
 	for _, r := range str {
 		if ((r > '\u002F') && (r < '\u003A')) || ((r > '\u0040') && (r < '\u005B')) {
@@ -153,6 +161,7 @@ func isTrueSym(str string) bool {
 	return false
 }
 
+// isTrueLen проверерка на валидность длины пароля
 func isTrueLen(str string) bool {
 	if len(str) >= 8 && len(str) <= 16 {
 		return true

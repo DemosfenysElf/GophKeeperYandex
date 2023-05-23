@@ -11,10 +11,10 @@ import (
 	"PasManagerGophKeeper/internal/storage"
 )
 
+// Config настройки полу
 type Config struct {
-	ServerAddress  string `env:"RUN_ADDRESS"`
-	BDAddress      string `env:"DATABASE_URI"`
-	AccrualAddress string `env:"ACCRUAL_SYSTEM_ADDRESS"`
+	ServerAddress string `env:"RUN_ADDRESS"`
+	BDAddress     string `env:"DATABASE_URI"`
 }
 
 type serverKeeper struct {
@@ -23,10 +23,12 @@ type serverKeeper struct {
 	DB   storage.DBI
 }
 
+// InitServer инициализация сервера
 func InitServer() *serverKeeper {
 	return &serverKeeper{Cfg: Config{ServerAddress: ":8080"}}
 }
 
+// StartServer запуск сервера
 func (s serverKeeper) StartServer() error {
 	if err := s.parseFlagCfg(); err != nil {
 		return err
@@ -46,6 +48,7 @@ func (s serverKeeper) StartServer() error {
 	return nil
 }
 
+// InitRouter Инициализация роутера
 func (s *serverKeeper) InitRouter(e *echo.Echo) {
 	e.POST("/api/user/register", s.postAPIUserRegister)
 	e.POST("/api/user/login", s.postAPIUserLogin)
@@ -61,6 +64,7 @@ func (s *serverKeeper) InitRouter(e *echo.Echo) {
 	e.GET("/read/bin", s.getReadALL, s.mwAuthentication)
 }
 
+// connectDB подключение к БД
 func (s *serverKeeper) connectDB() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
@@ -73,6 +77,8 @@ func (s *serverKeeper) connectDB() error {
 	}
 	return nil
 }
+
+// parseFlagCfg парсим флаги
 func (s *serverKeeper) parseFlagCfg() error {
 	errConfig := env.Parse(&s.Cfg)
 	if errConfig != nil {
