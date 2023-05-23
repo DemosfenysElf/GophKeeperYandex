@@ -10,14 +10,11 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/labstack/echo"
 	"github.com/pkg/errors"
 
-	"github.com/labstack/echo"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-
 	"PasManagerGophKeeper/internal/service"
-	"PasManagerGophKeeper/internal/storage"
+	"PasManagerGophKeeper/internal/testsService"
 )
 
 func TestPost(t *testing.T) {
@@ -133,24 +130,10 @@ func TestPost(t *testing.T) {
 				t.Errorf("Ошибка формирование JWT")
 			}
 
-			//
-			db, mock, err := sqlmock.New()
+			mockDB, mock, err := testsService.DBGormMockOnTests()
 			if err != nil {
-				t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+				return
 			}
-			dialector := postgres.New(postgres.Config{
-				PreferSimpleProtocol: false,
-				DriverName:           "postgres",
-				Conn:                 db,
-			})
-			DB, err := gorm.Open(dialector)
-			if err != nil {
-				t.Fatalf("error Gorm: %s", err)
-			}
-			mockDB := &storage.Database{}
-			mockDB.SetConnection(DB)
-			//
-
 			rout := InitServer()
 			e := echo.New()
 			rout.DB = mockDB
@@ -167,23 +150,20 @@ func TestPost(t *testing.T) {
 				WithArgs(tt.data.userID, tt.data.typeData, testbodyToString).
 				WillReturnError(tt.errBD2).WillReturnRows(sqlmock.NewRows([]string{"id"}))
 			mock.ExpectCommit()
-			//
 
 			request := httptest.NewRequest(http.MethodPost, tt.postAdress, bytes.NewReader(tt.testBody))
 			request.Header.Add(service.Authorization, service.Bearer+" "+tokenJWT)
 
-			rout.initRouter(e)
+			rout.InitRouter(e)
 
 			responseRecorder := httptest.NewRecorder()
 			e.ServeHTTP(responseRecorder, request)
-			//
 
 			response := responseRecorder.Result()
 			defer response.Body.Close()
 			if response.StatusCode != tt.want.codePost {
 				t.Errorf("Expected status code %d, got %d", tt.want.codePost, responseRecorder.Code)
 			}
-
 		})
 	}
 }

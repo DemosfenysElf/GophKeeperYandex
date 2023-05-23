@@ -13,11 +13,9 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/labstack/echo"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 
 	"PasManagerGophKeeper/internal/service"
-	"PasManagerGophKeeper/internal/storage"
+	"PasManagerGophKeeper/internal/testsService"
 )
 
 func TestAutPost(t *testing.T) {
@@ -173,22 +171,10 @@ func TestAutPost(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			db, mock, err := sqlmock.New()
+			mockDB, mock, err := testsService.DBGormMockOnTests()
 			if err != nil {
-				t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+				return
 			}
-			dialector := postgres.New(postgres.Config{
-				PreferSimpleProtocol: false,
-				DriverName:           "postgres",
-				Conn:                 db,
-			})
-			DB, err := gorm.Open(dialector)
-			if err != nil {
-				t.Fatalf("error Gorm: %s", err)
-			}
-			mockDB := &storage.Database{}
-			mockDB.SetConnection(DB)
-			//
 
 			rout := InitServer()
 			e := echo.New()
@@ -210,7 +196,7 @@ func TestAutPost(t *testing.T) {
 			request := httptest.NewRequest(http.MethodPost, tt.postAdress, bytes.NewReader(tt.testBody))
 			request.Header.Add(service.Authorization, tt.jwt)
 
-			rout.initRouter(e)
+			rout.InitRouter(e)
 
 			responseRecorder := httptest.NewRecorder()
 			e.ServeHTTP(responseRecorder, request)

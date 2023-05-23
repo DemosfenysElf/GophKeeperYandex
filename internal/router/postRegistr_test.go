@@ -15,11 +15,10 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/labstack/echo"
 	"github.com/pkg/errors"
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
 	"PasManagerGophKeeper/internal/service"
-	"PasManagerGophKeeper/internal/storage"
+	"PasManagerGophKeeper/internal/testsService"
 )
 
 func TestPostRegistr(t *testing.T) {
@@ -90,21 +89,10 @@ func TestPostRegistr(t *testing.T) {
 			h.Write([]byte(newUser.Password))
 			newUser.Password = hex.EncodeToString(h.Sum(nil))
 
-			db, mock, err := sqlmock.New()
+			mockDB, mock, err := testsService.DBGormMockOnTests()
 			if err != nil {
-				t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+				return
 			}
-			dialector := postgres.New(postgres.Config{
-				PreferSimpleProtocol: false,
-				DriverName:           "postgres",
-				Conn:                 db,
-			})
-			DB, err := gorm.Open(dialector)
-			if err != nil {
-				t.Fatalf("error Gorm: %s", err)
-			}
-			mockDB := &storage.Database{}
-			mockDB.SetConnection(DB)
 			rout := InitServer()
 			e := echo.New()
 			rout.DB = mockDB
@@ -119,7 +107,7 @@ func TestPostRegistr(t *testing.T) {
 			mock.ExpectCommit()
 
 			request := httptest.NewRequest(http.MethodPost, "/api/user/register", bytes.NewReader(marshalUser))
-			rout.initRouter(e)
+			rout.InitRouter(e)
 			responseRecorder := httptest.NewRecorder()
 			e.ServeHTTP(responseRecorder, request)
 			response := responseRecorder.Result()
@@ -211,21 +199,10 @@ func TestPostLogin(t *testing.T) {
 			h.Write([]byte(newUser.Password))
 			newUser.Password = hex.EncodeToString(h.Sum(nil))
 
-			db, mock, err := sqlmock.New()
+			mockDB, mock, err := testsService.DBGormMockOnTests()
 			if err != nil {
-				t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+				return
 			}
-			dialector := postgres.New(postgres.Config{
-				PreferSimpleProtocol: false,
-				DriverName:           "postgres",
-				Conn:                 db,
-			})
-			DB, err := gorm.Open(dialector)
-			if err != nil {
-				t.Fatalf("error Gorm: %s", err)
-			}
-			mockDB := &storage.Database{}
-			mockDB.SetConnection(DB)
 			rout := InitServer()
 			e := echo.New()
 			rout.DB = mockDB
@@ -236,7 +213,7 @@ func TestPostLogin(t *testing.T) {
 				WithArgs(tt.userFalse).WillReturnRows(row).WillReturnError(tt.errBD)
 
 			request := httptest.NewRequest(http.MethodPost, "/api/user/login", bytes.NewReader(marshalUser))
-			rout.initRouter(e)
+			rout.InitRouter(e)
 			responseRecorder := httptest.NewRecorder()
 			e.ServeHTTP(responseRecorder, request)
 			response := responseRecorder.Result()

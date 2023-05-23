@@ -43,7 +43,7 @@ func DecodeJWT(headertoken string) (Claims *ClaimsUser, err error) {
 func EncodeJWT(login string) (token string, err error) {
 	userClaims := ClaimsUser{
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Minute * 1).Unix(),
+			ExpiresAt: time.Now().Add(time.Minute * 9999).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
 		Login: login,

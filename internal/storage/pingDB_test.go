@@ -12,13 +12,9 @@ import (
 )
 
 func TestDBPing(t *testing.T) {
-	type want struct {
-		codeGet  int
-		response string
-	}
-	tests := []struct {
-		name string
 
+	tests := []struct {
+		name     string
 		errPing1 error
 		errPing2 error
 	}{

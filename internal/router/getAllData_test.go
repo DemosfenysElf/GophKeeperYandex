@@ -14,11 +14,9 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/labstack/echo"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 
 	"PasManagerGophKeeper/internal/service"
-	"PasManagerGophKeeper/internal/storage"
+	"PasManagerGophKeeper/internal/testsService"
 )
 
 func TestAutGet(t *testing.T) {
@@ -121,21 +119,10 @@ func TestAutGet(t *testing.T) {
 				t.Errorf("Ошибка формирование JWT")
 			}
 
-			db, mock, err := sqlmock.New()
+			mockDB, mock, err := testsService.DBGormMockOnTests()
 			if err != nil {
-				t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+				return
 			}
-			dialector := postgres.New(postgres.Config{
-				PreferSimpleProtocol: false,
-				DriverName:           "postgres",
-				Conn:                 db,
-			})
-			DB, err := gorm.Open(dialector)
-			if err != nil {
-				t.Fatalf("error Gorm: %s", err)
-			}
-			mockDB := &storage.Database{}
-			mockDB.SetConnection(DB)
 
 			rout := InitServer()
 			e := echo.New()
@@ -161,7 +148,7 @@ func TestAutGet(t *testing.T) {
 			request := httptest.NewRequest(http.MethodGet, tt.getAdress, nil)
 			request.Header.Add(service.Authorization, service.Bearer+" "+tokenJWT)
 
-			rout.initRouter(e)
+			rout.InitRouter(e)
 
 			responseRecorder := httptest.NewRecorder()
 			e.ServeHTTP(responseRecorder, request)

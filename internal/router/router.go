@@ -37,7 +37,7 @@ func (s serverKeeper) StartServer() error {
 
 	e := echo.New()
 
-	s.initRouter(e)
+	s.InitRouter(e)
 
 	err := e.Start(s.Cfg.ServerAddress)
 	if err != nil {
@@ -46,7 +46,7 @@ func (s serverKeeper) StartServer() error {
 	return nil
 }
 
-func (s *serverKeeper) initRouter(e *echo.Echo) {
+func (s *serverKeeper) InitRouter(e *echo.Echo) {
 	e.POST("/api/user/register", s.postAPIUserRegister)
 	e.POST("/api/user/login", s.postAPIUserLogin)
 
