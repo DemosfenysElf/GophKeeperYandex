@@ -225,14 +225,10 @@ func (ad *allData) postWrite(data []byte, operation string) error {
 	req.Header.Set(service.Authorization, ad.tokenJWT)
 
 	cli := http.Client{}
-
 	do, err := cli.Do(req)
+	defer do.Body.Close()
 	if err != nil {
 		return err
-	}
-
-	if err != nil {
-		return errAllBroken
 	}
 
 	switch do.StatusCode {

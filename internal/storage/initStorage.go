@@ -48,8 +48,14 @@ func (db *Database) Connect(ctx context.Context, connStr string) (err error) {
 	}
 
 	db.connection = pdb
-	pdb.AutoMigrate(&User{})
-	pdb.AutoMigrate(&DataTable{})
+	err = pdb.AutoMigrate(&User{})
+	if err != nil {
+		return err
+	}
+	err = pdb.AutoMigrate(&DataTable{})
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
